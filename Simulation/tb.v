@@ -1,5 +1,4 @@
 `timescale 1ns / 1ps
-`include "Sources/spi.v"
 
 module testbench();
     reg clk, rst, start_trans, default_val, CPOL, CPHA, clkDiv_en;
@@ -16,9 +15,10 @@ module testbench();
 
     always #5 clk <= ~clk;
 
-    assign MISO = MOSI;
+    //assign MISO = MOSI;
 
-    spi_master master_uut(clk, rst, start_trans, busy_m, MOSI, MISO, SPI_SCLK, CS, tx_data_m, rx_data_m, 3'd0, transaction_length, 1'b1, 4'd1, CPOL, 1'b0);
+    spi_master master_uut(clk, rst, start_trans, busy_m, MOSI, MISO, SPI_SCLK, CS, tx_data_m, rx_data_m, 3'd0, transaction_length, 4'd1, CPOL, 1'b0);
+    spi_slave slave_uut(clk, rst, busy_s, MOSI, MISO, SPI_SCLK, CS[0], tx_data_s, rx_data_s, transaction_length,  CPOL, 1'b0);
 
     initial //Tracked signals & Total sim time
         begin
@@ -40,7 +40,7 @@ module testbench();
           $dumpvars(12, CS);
           $dumpvars(13, start_trans);
          // $dumpvars(14, start_trans);
-          #2000
+          #3500
           $finish;
         end
 
@@ -50,7 +50,7 @@ module testbench();
             rst <= 0;
             start_trans <= 0;
             //CPHA <= 0;
-            CPOL <= 1;
+            CPOL <= 0;
             transaction_length <= 2'd0;
             #3
             rst <= 1;
@@ -61,17 +61,30 @@ module testbench();
     initial //Testcases
         begin
           tx_data_m <= 32'b1100_1010;
-          tx_data_s <= 32'd242;
+          tx_data_s <= 32'b0110_0011;
           #40
           start_trans <= 1;
           #20
           start_trans <= 0;
           #450
           tx_data_m <= 32'b1001_0110_0000_0010_1100_0101_1100_1010;
+          tx_data_s <= 32'b0110_0011_0010_0100_1111_1001_0111_1101;
           transaction_length <= 2'd3;
           #40
           start_trans <= 1;
           #20
           start_trans <= 0;
+          #1500
+          tx_data_m <= 32'b1010_0101_1001_1100;
+          tx_data_s <= 32'b0110_0101_1100_1010;
+          transaction_length <= 2'd1;
+          #200
+          start_trans <= 1;
+          #20
+          start_trans <= 0;  
         end
 endmodule//testbench
+
+
+`include "Sources/spi.v"
+
