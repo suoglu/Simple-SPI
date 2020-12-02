@@ -1,4 +1,5 @@
 `timescale 1ns / 1ps
+`include "Sources/spi.v"
 
 module testbench();
     reg clk, rst, start_trans, default_val, CPOL, CPHA, clkDiv_en;
@@ -17,8 +18,8 @@ module testbench();
 
     //assign MISO = MOSI;
 
-    spi_master master_uut(clk, rst, start_trans, busy_m, MOSI, MISO, SPI_SCLK, CS, tx_data_m, rx_data_m, 3'd0, transaction_length, 4'd1, CPOL, 1'b0);
-    spi_slave slave_uut(clk, rst, busy_s, MOSI, MISO, SPI_SCLK, CS[0], tx_data_s, rx_data_s, transaction_length,  CPOL, 1'b0);
+    spi_master master_uut(clk, rst, start_trans, busy_m, MOSI, MISO, SPI_SCLK, CS, tx_data_m, rx_data_m, 3'd0, transaction_length, 4'd1, CPOL, CPHA, 1'b0);
+    spi_slave slave_uut(clk, rst, busy_s, MOSI, MISO, SPI_SCLK, CS[0], tx_data_s, rx_data_s, transaction_length, CPOL, CPHA, 1'b0);
 
     initial //Tracked signals & Total sim time
         begin
@@ -49,7 +50,7 @@ module testbench();
             clk <= 0;
             rst <= 0;
             start_trans <= 0;
-            //CPHA <= 0;
+            CPHA <= 0;
             CPOL <= 0;
             transaction_length <= 2'd0;
             #3
@@ -60,23 +61,23 @@ module testbench();
 
     initial //Testcases
         begin
-          tx_data_m <= 32'b1100_1010;
-          tx_data_s <= 32'b0110_0011;
+          tx_data_m <= 32'b1010_1010;
+          tx_data_s <= 32'b1111_1011;
           #40
           start_trans <= 1;
           #20
           start_trans <= 0;
           #450
-          tx_data_m <= 32'b1001_0110_0000_0010_1100_0101_1100_1010;
-          tx_data_s <= 32'b0110_0011_0010_0100_1111_1001_0111_1101;
+          tx_data_m <= 32'b1100_1001_0010_0110_1010_0000_0101_1100;
+          tx_data_s <= 32'b1111_1001_0111_0110_0011_0010_1101_0100;
           transaction_length <= 2'd3;
           #40
           start_trans <= 1;
           #20
           start_trans <= 0;
           #1500
-          tx_data_m <= 32'b1010_0101_1001_1100;
-          tx_data_s <= 32'b0110_0101_1100_1010;
+          tx_data_m <= 32'b1010_1100_1101_1001;
+          tx_data_s <= 32'b0101_1101_0110_1010;
           transaction_length <= 2'd1;
           #200
           start_trans <= 1;
@@ -84,7 +85,3 @@ module testbench();
           start_trans <= 0;  
         end
 endmodule//testbench
-
-
-`include "Sources/spi.v"
-

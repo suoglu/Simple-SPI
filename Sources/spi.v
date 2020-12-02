@@ -18,6 +18,7 @@ module spi_master#(parameter SLAVE_COUNT = 8, parameter SLAVE_ADDRS_LEN = 3)(
   input [1:0] transaction_length, //0x00 8bit, 0x01 16bit, 0x10 24bit, 0x11 32bit
   input [3:0] division_ratio,
   input CPOL, //Clock polarity
+  input CPHA, //Clock phase
   input default_val);
   //SPI state related signals
   parameter SPI_READY   = 2'b00, //Ready for new process
@@ -50,7 +51,7 @@ module spi_master#(parameter SLAVE_COUNT = 8, parameter SLAVE_ADDRS_LEN = 3)(
   //SPI clock should not work when not in use
   assign SPI_SCLK = (SPI_working) ? (CPOL ^ spi_clk_main) : CPOL;
   //Clock polarisation and phase adjustment for inner logic
-  assign spi_clk_sys = (SPI_SCLK ^ CPOL);
+  assign spi_clk_sys = (SPI_SCLK ^ CPOL) ^ CPHA;
 
   //SPI states
   always@(posedge clk)
@@ -134,19 +135,19 @@ module spi_master#(parameter SLAVE_COUNT = 8, parameter SLAVE_ADDRS_LEN = 3)(
         case(transaction_length)
           2'd0:
             begin
-              MOSI = tx_buff[7];
+              MOSI = (CPHA) ? tx_buff[8] : tx_buff[7];
             end
           2'd1:
             begin
-              MOSI = tx_buff[15];
+              MOSI = (CPHA) ? tx_buff[16] : tx_buff[15];
             end
           2'd2:
             begin
-              MOSI = tx_buff[23];
+              MOSI = (CPHA) ? tx_buff[24] : tx_buff[23];
             end
           2'd3:
             begin
-              MOSI = tx_buff[31];
+              MOSI = (CPHA) ? tx_buff[32] : tx_buff[31];
             end 
         endcase
       else
@@ -220,6 +221,7 @@ module spi_slave(
   output reg [31:0] rx_data,
   input [1:0] transaction_length, //0x00 8bit, 0x01 16bit, 0x10 24bit, 0x11 32bit
   input CPOL, //Clock polarity
+  input CPHA, //Clock phase
   input default_val);
   parameter SPI_READY   = 2'b00, //Ready for new process
             SPI_PRE_Tx  = 2'b01, //Pre transfer process
@@ -243,7 +245,7 @@ module spi_slave(
   assign busy = ~SPI_ready;
 
   //Clock polarisation and phase adjustment for inner logic
-  assign spi_clk_sys = (SPI_SCLK ^ CPOL);
+  assign spi_clk_sys = (SPI_SCLK ^ CPOL) ^ CPHA;
 
   //SPI states
   always@(posedge clk)
@@ -282,19 +284,19 @@ module spi_slave(
         case(transaction_length)
           2'd0:
             begin
-              MISO = tx_buff[7];
+              MISO = (CPHA) ? tx_buff[7] : tx_buff[7];
             end
           2'd1:
             begin
-              MISO = tx_buff[15];
+              MISO = (CPHA) ? tx_buff[16] : tx_buff[15];
             end
           2'd2:
             begin
-              MISO = tx_buff[23];
+              MISO = (CPHA) ? tx_buff[24] : tx_buff[23];
             end
           2'd3:
             begin
-              MISO = tx_buff[31];
+              MISO = (CPHA) ? tx_buff[32] : tx_buff[31];
             end 
         endcase
       else
