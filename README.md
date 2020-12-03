@@ -11,7 +11,8 @@
 7. Test
 8. Status Information
 9. List of Tested Modules
-10. Issues
+10. Knows Issues
+11. Additional
 
 [![Repo on GitLab](https://img.shields.io/badge/repo-GitLab-6C488A.svg)](https://gitlab.com/suoglu/spi)
 [![Repo on GitHub](https://img.shields.io/badge/repo-GitHub-3D76C2.svg)](https://github.com/suoglu/Simple-SPI)
@@ -24,17 +25,19 @@ Set of simple modules to communicate using SPI protocol.
 
 ## Modules
 
-Two SPI modules (a master and a slave) and a clock divider module is included in [spi.v](Sources/spi.v).
+Two SPI modules (a master and a slave) and a clock divider module are included in [spi.v](Sources/spi.v).
 
 ### `spi_master`
 
 * SPI master module
 * Supports multiple slaves.
-* Supports both clock polarities (CPOL) and phases (CPHA).
+* Supports all clock polarities (CPOL) and phases (CPHA).
 * Supports 8, 16, 24 and 32 bit transactions.
-* Variable SPI clock frequecy gis
+* Variable SPI clock frequecy generation
 
-* SPI slave nodule
+### `spi_slave`
+
+* SPI slave module
 * Supports both clock polarities (CPOL) and phases (CPHA).
 * Supports 8, 16, 24 and 32 bit transactions.
 
@@ -124,6 +127,6 @@ Not done yet
 
 Not done yet
 
-## Issues
+## Known Issues
 
 * **Possible issue:** MISO signal might come late when `CPHA` is high during 8 bit transaction. (It is working properly in simulation)
