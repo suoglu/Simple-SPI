@@ -15,7 +15,7 @@ module spi_master#(parameter SLAVE_COUNT = 8, parameter SLAVE_ADDRS_LEN = 3)(
   input [31:0] tx_data, 
   output reg [31:0] rx_data, 
   input [(SLAVE_ADDRS_LEN-1):0] chipADDRS, 
-  input [1:0] transaction_length, //0x00 8bit, 0x01 16bit, 0x10 24bit, 0x11 32bit
+  input [1:0] transaction_length, //0b00 8bit, 0b01 16bit, 0b10 24bit, 0b11 32bit
   input [3:0] division_ratio,
   input CPOL, //Clock polarity
   input CPHA, //Clock phase
