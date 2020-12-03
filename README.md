@@ -12,7 +12,6 @@
 8. Status Information
 9. List of Tested Modules
 10. Knows Issues
-11. Additional
 
 [![Repo on GitLab](https://img.shields.io/badge/repo-GitLab-6C488A.svg)](https://gitlab.com/suoglu/spi)
 [![Repo on GitHub](https://img.shields.io/badge/repo-GitHub-3D76C2.svg)](https://github.com/suoglu/Simple-SPI)
@@ -27,7 +26,7 @@ Set of simple modules to communicate using SPI protocol.
 
 Two SPI modules (a master and a slave) and a clock divider module are included in [spi.v](Sources/spi.v).
 
-### `spi_master`
+**`spi_master`**
 
 * SPI master module
 * Supports multiple slaves.
@@ -35,13 +34,13 @@ Two SPI modules (a master and a slave) and a clock divider module are included i
 * Supports 8, 16, 24 and 32 bit transactions.
 * Variable SPI clock frequecy generation
 
-### `spi_slave`
+**`spi_slave`**
 
 * SPI slave module
 * Supports both clock polarities (CPOL) and phases (CPHA).
 * Supports 8, 16, 24 and 32 bit transactions.
 
-### `clockDiv16`
+**`clockDiv16`**
 
 * Used to generate SPI clock from system clock.
 * Outputs a clock array with 16 diffrent frequencies.
@@ -52,7 +51,7 @@ Two SPI modules (a master and a slave) and a clock divider module are included i
 
 Both modules use same naming.
 
-|   Port   | Module | Oriantation | Width |  Description |
+|   Port   | Module | Orientation | Width |  Description |
 | :------: | :----: | :----: | :----: |  ------    |
 |  `clk`   |   M/S  |   I   | 1 | System Clock |
 |  `rst`   |   M/S  |   I   | 1 | System Reset |
