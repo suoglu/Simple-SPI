@@ -1,5 +1,5 @@
 /*
- * Simple SPI interface
+ * Simple SPI interface v1
  * Suoglu, Des 2020
  */
 
@@ -181,9 +181,9 @@ module spi_master#(parameter SLAVE_COUNT = 8, parameter SLAVE_ADDRS_LEN = 3)(
     end
   
   //Store receive buffer data to rx_data
-  always@(negedge SPI_post_t)
-    begin
-      rx_data <= rx_buff;
+  always@(posedge clk)
+    begin  
+      rx_data <= (SPI_post_t) ? rx_buff : rx_data;
     end
 
   //Chip (Slave) select
@@ -284,7 +284,7 @@ module spi_slave(
         case(transaction_length)
           2'd0:
             begin
-              MISO = (CPHA) ? tx_buff[7] : tx_buff[7];
+              MISO = (CPHA) ? tx_buff[8] : tx_buff[7];
             end
           2'd1:
             begin
@@ -330,9 +330,9 @@ module spi_slave(
     end
   
   //Store receive buffer data to rx_data
-  always@(negedge SPI_post_t)
-    begin
-      rx_data <= rx_buff;
+  always@(posedge clk)
+    begin  
+      rx_data <= (SPI_post_t) ? rx_buff : rx_data;
     end
 endmodule//spi_slave
 

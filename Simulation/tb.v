@@ -50,7 +50,7 @@ module testbench();
             clk <= 0;
             rst <= 0;
             start_trans <= 0;
-            CPHA <= 0;
+            CPHA <= 1;
             CPOL <= 0;
             transaction_length <= 2'd0;
             #3

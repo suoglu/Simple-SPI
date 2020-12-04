@@ -10,7 +10,7 @@
 6. Simulation
 7. Test
 8. Status Information
-9. List of Tested Modules
+9. List of Tested Devices
 10. Knows Issues
 
 [![Repo on GitLab](https://img.shields.io/badge/repo-GitLab-6C488A.svg)](https://gitlab.com/suoglu/spi)
@@ -45,7 +45,7 @@ Two SPI modules (a master and a slave) and a clock divider module are included i
 * Used to generate SPI clock from system clock.
 * Outputs a clock array with 16 diffrent frequencies.
 
-**Important:** CPOL, CPHA and transaction width values should be decided before transaction begins.
+**Important:** CPOL, CPHA and transaction width values should be decided before the transaction begins.
 
 ## IOs of Modules
 
@@ -102,7 +102,7 @@ SPI clock generated from system clock using `clockDiv16` module. `clockDiv16` ge
 
 ## Serial Peripheral Interface
 
-Information about Serial Peripheral Interface (SPI) can be found on [Wikiperdia](https://en.wikipedia.org/wiki/Serial_Peripheral_Interface). A really good introduction can be found on [Analog.com](https://www.analog.com/en/analog-dialogue/articles/introduction-to-spi-interface.html).
+Information about Serial Peripheral Interface (SPI) can be found on [Wikipedia](https://en.wikipedia.org/wiki/Serial_Peripheral_Interface). A really good introduction can be found on [Analog.com](https://www.analog.com/en/analog-dialogue/articles/introduction-to-spi-interface.html).
 
 SPI can be used to communicate a single master with multiple slaves. SPI protocol uses four signals to communicate. All modules are connected to same data lines (MOSI and MISO) and  SPI synchronous clock (SPI clock). Each slave must have its own chip (slave) select line connected to master. Master selects slave using active low CS signal. Then master starts toggle SPI clock to go on with the transaction. Master must select only one slave at a given time. MOSI signal carries data from master to slave. MISO signal carries data from slave to master.
 
@@ -114,18 +114,26 @@ Modules simulated in [tb.v](Simulation/tb.v). Slave and master module simulated 
 
 ## Test
 
-Not done yet
+**Test 1:**
+
+Modules are tested on [Digilent Basys 3](https://reference.digilentinc.com/reference/programmable-logic/basys-3/reference-manual) with [board.v](Test/board.v). Master and a slave modules are connected to each other. SPI signals are also connected to upper four signal ports of JB header. Recieved data of slave module is connected to LEDs and revieved data of master module is connected to seven segment displays. Transmit data of slave module is connected to recieved data of slave module, thus slave module echos the data from previous transaction. Master module gets its transmission data from eight right most switches. Data rom these switches replicated to make it 32 bit. Left most switches used for configuration. Center button is used to reset, all other buttons used to initiate a new transfer. During testing inputs (switches), outputs (ssds and leds) and SPI signals (JB header) are monitored.
+
+System is tested using all available clock settings and transaction lengths with multiple SPI clock frequencies. System behaves unstable when used in highest available clock frequency (50 MHz). System behaves as expected for other tested frequencies.
 
 ## Status Information
 
 **Last simulation:** 3 December 2020, with [Icarus Verilog](http://iverilog.icarus.com).
 
-**Last test:** Not done yet
+**Last test:** 4 December 2020, on [Digilent Basys 3](https://reference.digilentinc.com/reference/programmable-logic/basys-3/reference-manual).
 
-## List of Tested Modules
+## List of Tested Devices
 
-Not done yet
+Modules are not tested with any other devices yet. Please let me know if you try it with a device.
+| Device Name | CPOL/CPHA | Transaction Lenght | Status | Credit |
+| :------: | :------: | :------: | :------: | :------: |
+| - | - | - | - | - |
 
 ## Known Issues
 
-* **Possible issue:** MISO signal might come late when `CPHA` is high during 8 bit transaction. (It is working properly in simulation)
+* In simulation, MISO signal might come late when `CPHA` is high during 8 bit transaction. However it is working properly on device.
+* Transaction is not working stable at highest SPI clock frequency.
