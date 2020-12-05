@@ -1,7 +1,13 @@
-/*
- * Simple SPI interface v1
- * Suoglu, Des 2020
- */
+/* ------------------------------------------------ *
+ * Title       : Simple SPI interface v1            *
+ * Project     : Simple SPI                         *
+ * ------------------------------------------------ *
+ * File        : spi.v                              *
+ * Author      : Yigit Suoglu                       *
+ * Last Edit   : 04/12/2020                         *
+ * ------------------------------------------------ *
+ * Description : SPI slave and master modules       *
+ * ------------------------------------------------ */
 
 module spi_master#(parameter SLAVE_COUNT = 8, parameter SLAVE_ADDRS_LEN = 3)(
   input clk,

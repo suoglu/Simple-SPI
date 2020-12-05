@@ -1,3 +1,14 @@
+/* ------------------------------------------------- *
+ * Title       : Testbench for spi.v                 *
+ * Project     : Simple SPI                          *
+ * ------------------------------------------------- *
+ * File        : tb.v                                *
+ * Author      : Yigit Suoglu                        *
+ * Last Edit   : 04/12/2020                          *
+ * ------------------------------------------------- *
+ * Description : Simulation for SPI modules in spi.v *
+ * ------------------------------------------------- */
+
 `timescale 1ns / 1ps
 `include "Sources/spi.v"
 
