@@ -118,13 +118,13 @@ Modules simulated in [tb.v](Simulation/tb.v). Slave and master module simulated 
 
 Modules are tested on [Digilent Basys 3](https://reference.digilentinc.com/reference/programmable-logic/basys-3/reference-manual) with [board.v](Test/board.v). Master and a slave modules are connected to each other. SPI signals are also connected to upper four signal ports of JB header. Recieved data of slave module is connected to LEDs and revieved data of master module is connected to seven segment displays. Transmit data of slave module is connected to recieved data of slave module, thus slave module echos the data from previous transaction. Master module gets its transmission data from eight right most switches. Data rom these switches replicated to make it 32 bit. Left most switches used for configuration. Center button is used to reset, all other buttons used to initiate a new transfer. During testing inputs (switches), outputs (ssds and leds) and SPI signals (JB header) are monitored.
 
-System is tested using all available clock settings and transaction lengths with multiple SPI clock frequencies. System behaves unstable when used in highest available clock frequency (50 MHz). System behaves as expected for other tested frequencies.
+System is tested using all available clock settings and transaction lengths with multiple SPI clock frequencies. System sometimes behaves unstable when used in highest available clock frequency (50 MHz). System behaves as expected for other tested frequencies.
 
 ## Status Information
 
 **Last simulation:** 3 December 2020, with [Icarus Verilog](http://iverilog.icarus.com).
 
-**Last test:** 4 December 2020, on [Digilent Basys 3](https://reference.digilentinc.com/reference/programmable-logic/basys-3/reference-manual).
+**Last test:** 7 December 2020, on [Digilent Basys 3](https://reference.digilentinc.com/reference/programmable-logic/basys-3/reference-manual).
 
 ## List of Tested Devices
 
@@ -136,4 +136,4 @@ Modules are not tested with any other devices yet. Please let me know if you try
 ## Known Issues
 
 * In simulation, MISO signal might come late when `CPHA` is high during 8 bit transaction. However it is working properly on device.
-* Transaction is not working stable at highest SPI clock frequency.
+* Transaction is not always working stable at highest available SPI clock frequency.

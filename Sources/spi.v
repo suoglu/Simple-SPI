@@ -15,7 +15,7 @@ module spi_master#(parameter SLAVE_COUNT = 8, parameter SLAVE_ADDRS_LEN = 3)(
   input start_trans, //Start transaction
   output busy, 
   output reg MOSI, 
-  input MISO, 
+  inout MISO, 
   output SPI_SCLK, 
   output reg [(SLAVE_COUNT-1):0] CS, 
   input [31:0] tx_data, 
@@ -220,7 +220,7 @@ module spi_slave(
   input rst,
   output busy, 
   input MOSI, 
-  output reg MISO, 
+  inout MISO, 
   input SPI_SCLK, 
   input CS, 
   input [31:0] tx_data, 
@@ -236,12 +236,15 @@ module spi_slave(
   reg [4:0] SPI_transaction_counter;
   reg [1:0] SPI_state;
   wire SPI_ready, SPI_pre_t, SPI_working, SPI_post_t;
+  reg MISO_s;
   //Buffers
   reg [31:0] rx_buff;
   reg [32:0] tx_buff;
   //Counters and clocking
   wire [15:0] clk_array;
   wire spi_clk_sys; //SPI clock to be used in the module
+
+  assign MISO = (CS) ? 1'dZ : MISO_s;
 
   //Decode states
   assign SPI_ready = (SPI_state == SPI_READY);
@@ -290,23 +293,23 @@ module spi_slave(
         case(transaction_length)
           2'd0:
             begin
-              MISO = (CPHA) ? tx_buff[8] : tx_buff[7];
+              MISO_s = (CPHA) ? tx_buff[8] : tx_buff[7];
             end
           2'd1:
             begin
-              MISO = (CPHA) ? tx_buff[16] : tx_buff[15];
+              MISO_s = (CPHA) ? tx_buff[16] : tx_buff[15];
             end
           2'd2:
             begin
-              MISO = (CPHA) ? tx_buff[24] : tx_buff[23];
+              MISO_s = (CPHA) ? tx_buff[24] : tx_buff[23];
             end
           2'd3:
             begin
-              MISO = (CPHA) ? tx_buff[32] : tx_buff[31];
+              MISO_s = (CPHA) ? tx_buff[32] : tx_buff[31];
             end 
         endcase
       else
-        MISO = default_val;
+        MISO_s = default_val;
     end
 
   //Transmit buffer

@@ -4,14 +4,14 @@
  * ------------------------------------------------- *
  * File        : board.v                             *
  * Author      : Yigit Suoglu                        *
- * Last Edit   : 04/12/2020                          *
+ * Last Edit   : 07/12/2020                          *
  * ------------------------------------------------- *
  * Description : Test SPI modules on FPGA            *
  * ------------------------------------------------- */
 
-`include "Sources/spi.v"
-`include "Test/ssd_util.v"
-`include "Test/btn_debouncer.v"
+//`include "Sources/spi.v"
+//`include "Test/ssd_util.v"
+//`include "Test/btn_debouncer.v"
 //Comment out includes in vivado
 
 module board(

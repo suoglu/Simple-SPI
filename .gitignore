@@ -2,3 +2,4 @@
 *.out
 *vivado*
 *.vcd
+*.tcl
