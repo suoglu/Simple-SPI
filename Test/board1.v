@@ -9,9 +9,9 @@
  * Description : Test SPI modules on FPGA            *
  * ------------------------------------------------- */
 
-//`include "Sources/spi.v"
-//`include "Test/ssd_util.v"
-//`include "Test/btn_debouncer.v"
+`include "Sources/spi.v"
+`include "Test/ssd_util.v"
+`include "Test/btn_debouncer.v"
 //Comment out includes in vivado
 
 module board(

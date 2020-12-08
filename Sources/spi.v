@@ -15,7 +15,7 @@ module spi_master#(parameter SLAVE_COUNT = 8, parameter SLAVE_ADDRS_LEN = 3)(
   input start_trans, //Start transaction
   output busy, 
   output reg MOSI, 
-  inout MISO, 
+  input MISO, 
   output SPI_SCLK, 
   output reg [(SLAVE_COUNT-1):0] CS, 
   input [31:0] tx_data, 
@@ -27,7 +27,7 @@ module spi_master#(parameter SLAVE_COUNT = 8, parameter SLAVE_ADDRS_LEN = 3)(
   input CPHA, //Clock phase
   input default_val);
   //SPI state related signals
-  parameter SPI_READY   = 2'b00, //Ready for new process
+  localparam SPI_READY  = 2'b00, //Ready for new process
             SPI_PRE_Tx  = 2'b01, //Pre transfer process
             SPI_Tx  = 2'b11, //SPI transfer in progress
             SPI_POST_Tx = 2'b10; //Post transfer process
@@ -43,7 +43,7 @@ module spi_master#(parameter SLAVE_COUNT = 8, parameter SLAVE_ADDRS_LEN = 3)(
   wire spi_clk_sys; //SPI clock to be used in the module
   reg stopper;
   
-  clockDiv16 clock_div(clk, rst, clk_array);
+  clockDiv16_a clock_div(clk, rst, clk_array);
 
   //Decode states
   assign SPI_ready = (SPI_state == SPI_READY);
@@ -220,7 +220,7 @@ module spi_slave(
   input rst,
   output busy, 
   input MOSI, 
-  inout MISO, 
+  output MISO, 
   input SPI_SCLK, 
   input CS, 
   input [31:0] tx_data, 
@@ -366,7 +366,7 @@ endmodule//spi_slave
   + 1111:     1.526   kHz
   */
 //Clock divider module
-module clockDiv16(clk_i, rst, clk_o);
+module clockDiv16_a(clk_i, rst, clk_o);
   input clk_i, rst;
   output [15:0] clk_o;  
   reg [15:0] clk_array; //Clock generation array, asynchronous reset
@@ -403,4 +403,4 @@ module clockDiv16(clk_i, rst, clk_o);
             end
         end
     endgenerate
-endmodule//clockDiv16
+endmodule//clockDiv16_a
