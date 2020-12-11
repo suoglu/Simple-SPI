@@ -9,8 +9,8 @@
  * Description : Test SPI slaves modules on FPGA     *
  * ------------------------------------------------- */
 
-`include "Sources/spi.v"
-`include "Test/ssd_util.v"
+//`include "Sources/spi.v"
+//`include "Test/ssd_util.v"
 
 module SPI_LED(
   input clk,
@@ -52,7 +52,7 @@ module SPI_SSD(input clk,
   wire [3:0] digit0, digit1, digit2, digit3;
   
   assign tx = rx; //echo back prev
-  assign seg = {a, b, c, d, e, f, g};
+  assign seg = {g, f, e, d, c, b, a};
   assign {digit3, digit2, digit1, digit0} = (display_high_bits) ? rx[31:16] : rx[15:0];
 
   ssdController4 ssd(clk, rst, 4'b1111, digit0, digit1, digit2, digit3, a, b, c, d, e, f, g, an);
