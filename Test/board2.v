@@ -1,19 +1,19 @@
 /* ------------------------------------------------- *
- * Title       : Test module for spi.v v2            *
+ * Title       : Slave est module for spi.v v2       *
  * Project     : Simple SPI                          *
  * ------------------------------------------------- *
- * File        : board.v                             *
+ * File        : board2.v                            *
  * Author      : Yigit Suoglu                        *
  * Last Edit   : 07/12/2020                          *
  * ------------------------------------------------- *
- * Description : Test SPI modules using external     *
- *               SPI master                          *
+ * Description : Test SPI slave module using         *
+ *               external SPI master                 *
  * ------------------------------------------------- */
 
-`include "Test/spi_slaves.v"
-`include "Sources/miso_switch.v"
+//`include "Test/spi_slaves.v"
+//`include "Sources/miso_switch.v"
 
-module board(
+module board2(
   input clk,
   input rst, //btnC
   input MOSI, //JB2

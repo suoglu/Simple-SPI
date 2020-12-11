@@ -24,7 +24,7 @@ Set of simple modules to communicate using SPI protocol.
 
 ## Modules
 
-Two SPI modules (a master and a slave) and a clock divider module are included in [spi.v](Sources/spi.v).
+Two SPI modules (a master and a slave) and a clock divider module are included in [spi.v](Sources/spi.v). A MISO signal router included in [miso_switch.v](Sources/miso_switch.v).
 
 **`spi_master`**
 
@@ -39,6 +39,10 @@ Two SPI modules (a master and a slave) and a clock divider module are included i
 * SPI slave module
 * Supports both clock polarities (CPOL) and phases (CPHA).
 * Supports 8, 16, 24 and 32 bit transactions.
+
+**`MISO_switch`**
+
+* Can be used to route correct MISO signal coming from slaves to MISO input of master when three-state logic is not available.
 
 **`clockDiv16`**
 
@@ -55,7 +59,7 @@ Both modules use same naming.
 | :------: | :----: | :----: | :----: |  ------    |
 |  `clk`   |   M/S  |   I   | 1 | System Clock |
 |  `rst`   |   M/S  |   I   | 1 | System Reset |
-|  `busy`  |   M/S  | O | 1 | Busy signal. Indicates that, the module is in a SPI transaction. |
+|  `busy`  |   M/S  | O | 1 | Busy signal. Indicates an ongoing SPI transaction. |
 | `start_trans` | M | I | 1 | Initiate a SPI transfer |
 |  `MOSI` | M/S | O/I | 1 | Master Out Slave In, SPI signal |
 |  `MISO` | M/S | I/O | 1 | Master In Slave Out, SPI signal |
@@ -72,11 +76,11 @@ Both modules use same naming.
 
 M: Master  S: Slave  I: Input  O: Output
 
-*Width of `chipADDRS` and `CS` for master module controlled by following parameters.
+*Width of `chipADDRS` and `CS` for master module controlled by following parameters. `SLAVE_COUNT` can be controlled, `SLAVE_ADDRS_LEN` is calculated automatically.
 |   Parameter   | Default Value |  Description |
 |   :-------:   | :-----------: |  ----------  |
-| `SLAVE_COUNT` |   8  |   Number of maximum slaves to be connected   |
-| `SLAVE_ADDRS_LEN` |   3  | Width slave address |
+| `SLAVE_COUNT` |   8  |   Number of maximum addressable slaves |
+| `SLAVE_ADDRS_LEN` |   3  | Width of the slave address (Calculated automatically) |
 
 ## SPI Synchronous Clock
 
@@ -115,25 +119,33 @@ Modules simulated in [tb.v](Simulation/tb.v). Slave and master module simulated 
 
 ## Test
 
+Modules are tested using *board**N**.v* and constrain file *Basys3_master**N**.xdc*, where ***N*** denotes the test board version.
+
 **Test 1:**
 
 Modules are tested on [Digilent Basys 3](https://reference.digilentinc.com/reference/programmable-logic/basys-3/reference-manual) with [board1.v](Test/board1.v). Master and a slave modules are connected to each other. SPI signals are also connected to upper four signal ports of JB header. Recieved data of slave module is connected to LEDs and revieved data of master module is connected to seven segment displays. Transmit data of slave module is connected to recieved data of slave module, thus slave module echos the data from previous transaction. Master module gets its transmission data from eight right most switches. Data rom these switches replicated to make it 32 bit. Left most switches used for configuration. Center button is used to reset, all other buttons used to initiate a new transfer. During testing inputs (switches), outputs (ssds and leds) and SPI signals (JB header) are monitored.
 
 System is tested using all available clock settings and transaction lengths with multiple SPI clock frequencies. System sometimes behaves unstable when used in highest available clock frequency (50 MHz). System behaves as expected for other tested frequencies.
 
+**Test 2:**
+
+Master module is tested on [Digilent Basys 3](https://reference.digilentinc.com/reference/programmable-logic/basys-3/reference-manual) with [board3.v](Test/board3.v). MOSI and MISO signals connected to each other, and all SPI signals are observed from JB header using [Digilent Digital Discovery](https://reference.digilentinc.com/reference/instrumentation/digital-discovery/start). Transmission data from eight right most switches and SPI configurations read from eight left most switches. Higher bits of received data are shown with LEDs and lower bits of received data are shown on seven segment display.
+
+System is tested using all available clock settings and transaction lengths with multiple SPI clock frequencies. System sometimes behaves unstable when used in two highest available clock frequency (25 & 50 MHz). System behaves as expected for other tested frequencies, similar to Test 1.
+
 ## Status Information
 
 **Last simulation:** 3 December 2020, with [Icarus Verilog](http://iverilog.icarus.com).
 
-**Last test:** 7 December 2020, on [Digilent Basys 3](https://reference.digilentinc.com/reference/programmable-logic/basys-3/reference-manual).
+**Last test:** 11 December 2020, on [Digilent Basys 3](https://reference.digilentinc.com/reference/programmable-logic/basys-3/reference-manual).
 
 ## List of Tested Devices
 
 Modules are not tested with any other devices yet. Please let me know if you try it with a device.
-| Device Name | CPOL/CPHA | Master/Slave | Transaction Lenght | Status | Notes |
-| :------: | :------: | :------: | :------: | :------: | ------ |
-|  |  |  |  |  |  |
-|  |  |  |  |  |  |
+| Device Name | Tested Interface | CPOL/CPHA | Transaction Lenght | Status | Test Number | Notes |
+| :------: | :------: | :------: | :------: | :------: | :------: | ------ |
+| Digilent Digital Discovery | Master | All | 8, 16, 24, 32 bit | Ok | #2 | with Protocol Spying |
+| Arduino Uno | Slave | All | 8 bit | Planned | #? | Using native SPI library |
 
 ## Known Issues
 

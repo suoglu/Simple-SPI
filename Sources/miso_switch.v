@@ -1,5 +1,5 @@
 /* ------------------------------------------------ *
- * Title       : MISO router module                 *
+ * Title       : MISO Switch                        *
  * Project     : Simple SPI                         *
  * ------------------------------------------------ *
  * File        : miso_switch.v                      *

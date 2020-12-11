@@ -1,5 +1,5 @@
 /* ------------------------------------------------ *
- * Title       : Simple SPI interface v1            *
+ * Title       : Simple SPI interface v1.1          *
  * Project     : Simple SPI                         *
  * ------------------------------------------------ *
  * File        : spi.v                              *
@@ -7,9 +7,14 @@
  * Last Edit   : 04/12/2020                         *
  * ------------------------------------------------ *
  * Description : SPI slave and master modules       *
+ * ------------------------------------------------ *
+ * Revisions   :                                    *
+ *     v1      : Inital version                     *
+ *     v1.1    : SLAVE_ADDRS_LEN calculated automa- *
+ *               tically from SLAVE_COUNT.          *
  * ------------------------------------------------ */
 
-module spi_master#(parameter SLAVE_COUNT = 8, parameter SLAVE_ADDRS_LEN = 3)(
+module spi_master#(parameter SLAVE_COUNT = 8)(
   input clk,
   input rst, 
   input start_trans, //Start transaction
@@ -20,12 +25,14 @@ module spi_master#(parameter SLAVE_COUNT = 8, parameter SLAVE_ADDRS_LEN = 3)(
   output reg [(SLAVE_COUNT-1):0] CS, 
   input [31:0] tx_data, 
   output reg [31:0] rx_data, 
-  input [(SLAVE_ADDRS_LEN-1):0] chipADDRS, 
+  input [($clog2(SLAVE_COUNT)-1):0] chipADDRS, 
   input [1:0] transaction_length, //0b00 8bit, 0b01 16bit, 0b10 24bit, 0b11 32bit
   input [3:0] division_ratio,
   input CPOL, //Clock polarity
   input CPHA, //Clock phase
   input default_val);
+  //Slave address width
+  localparam SLAVE_ADDRS_LEN = $clog2(SLAVE_COUNT);
   //SPI state related signals
   localparam SPI_READY  = 2'b00, //Ready for new process
             SPI_PRE_Tx  = 2'b01, //Pre transfer process
@@ -43,7 +50,7 @@ module spi_master#(parameter SLAVE_COUNT = 8, parameter SLAVE_ADDRS_LEN = 3)(
   wire spi_clk_sys; //SPI clock to be used in the module
   reg stopper;
   
-  clockDiv16_a clock_div(clk, rst, clk_array);
+  cclockDiv16_a clock_div(clk, rst, clk_array);
 
   //Decode states
   assign SPI_ready = (SPI_state == SPI_READY);
@@ -130,6 +137,10 @@ module spi_master#(parameter SLAVE_COUNT = 8, parameter SLAVE_ADDRS_LEN = 3)(
         SPI_Tx:
           begin
             stopper <= (SPI_transaction_counter == 5'd27) ? 0 : stopper;
+          end
+        default:
+          begin
+            stopper <= stopper;
           end
       endcase
     end
@@ -366,7 +377,7 @@ endmodule//spi_slave
   + 1111:     1.526   kHz
   */
 //Clock divider module
-module clockDiv16_a(clk_i, rst, clk_o);
+module cclockDiv16_a(clk_i, rst, clk_o);
   input clk_i, rst;
   output [15:0] clk_o;  
   reg [15:0] clk_array; //Clock generation array, asynchronous reset
@@ -403,4 +414,4 @@ module clockDiv16_a(clk_i, rst, clk_o);
             end
         end
     endgenerate
-endmodule//clockDiv16_a
+endmodule//cclockDiv16_a

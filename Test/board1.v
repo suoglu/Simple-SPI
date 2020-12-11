@@ -1,20 +1,20 @@
 /* ------------------------------------------------- *
- * Title       : Test module for spi.v               *
+ * Title       : Internal test module for spi.v      *
  * Project     : Simple SPI                          *
  * ------------------------------------------------- *
- * File        : board.v                             *
+ * File        : board1.v                            *
  * Author      : Yigit Suoglu                        *
  * Last Edit   : 07/12/2020                          *
  * ------------------------------------------------- *
  * Description : Test SPI modules on FPGA            *
  * ------------------------------------------------- */
 
-`include "Sources/spi.v"
-`include "Test/ssd_util.v"
-`include "Test/btn_debouncer.v"
+//`include "Sources/spi.v"
+//`include "Test/ssd_util.v"
+//`include "Test/btn_debouncer.v"
 //Comment out includes in vivado
 
-module board(
+module board1(
   input clk, 
   input btnC, //reset
   input btnU,
@@ -28,6 +28,7 @@ module board(
   output [3:0] JB);
   
   wire rst;
+ 
   wire begin_ta;
   wire MOSI, MISO, SPI_SCLK, CPOL, CPHA;
   wire CS;
@@ -64,6 +65,6 @@ module board(
   assign JB[0] = CS;
 
   spi_slave slave(clk, rst, sbusy, MOSI, MISO,  SPI_SCLK, CS, slave_tx, slave_rx,  transaction_length, CPOL, CPHA, 1'b0);
-  spi_master #(1, 1) master(clk, rst, begin_ta, mbusy, MOSI, MISO, SPI_SCLK, CS, master_tx, master_rx, 1'b0,  transaction_length, {freq_adjust, 1'b0}, CPOL, CPHA, 1'b0);
+  spi_master #(1) master(clk, rst, begin_ta, mbusy, MOSI, MISO, SPI_SCLK, CS, master_tx, master_rx, 1'b0,  transaction_length, {freq_adjust, 1'b0}, CPOL, CPHA, 1'b0);
   
 endmodule//board
