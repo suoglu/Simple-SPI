@@ -20,8 +20,8 @@ module board3(
   input rst, //btnC
   output MOSI, //JB2
   input MISO, //JB3
-  output SPI_SCLK, //JB1
-  output CS, //JB4
+  output SPI_SCLK, //JB4
+  output CS, //JB1
   input [1:0] transaction_length, //SW[13:12]
   input CPOL, //SW[15]
   input CPHA,  //SW[14]

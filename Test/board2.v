@@ -18,8 +18,8 @@ module board2(
   input rst, //btnC
   input MOSI, //JB2
   output MISO, //JB3
-  input SPI_SCLK, //JB1
-  input [1:0] CS, //JB8, JB7
+  input SPI_SCLK, //JB4
+  input CS, //JB1
   input [1:0] transaction_length, //SW[1:0]
   input CPOL, //SW[2]
   input CPHA,  //SW[3]
@@ -28,12 +28,17 @@ module board2(
   output [3:0] an,
   output [6:0] seg
  );
+
+  wire [31:0] tx, rx;
+  wire a, b, c, d, e, f, g;
+
+
+  assign tx = rx; //echo back prev
+  assign led = rx[31:16];
+  assign seg = {g, f, e, d, c, b, a};
+
+  ssdController4 ssdcntrl(clk, rst, 4'b1111, rx[3:0], rx[7:4], rx[11:8], rx[15:12], a, b, c, d, e, f, g, an);
+
+  spi_slave spi(clk, rst, , MOSI, MISO, SPI_SCLK, CS, tx, rx,  transaction_length, CPOL, CPHA, 1'bZ);
   
-  wire MISO0, MISO1;
-
-  MISO_switch#(2) misoSwitch({MISO1, MISO0}, CS, MISO);
-
-   SPI_LED led_controller(clk, rst, MOSI, MISO0, SPI_SCLK, CS[0], transaction_length, CPOL, CPHA, display_high_bits, led);
-
-   SPI_SSD ssd_controller(clk, rst, MOSI, MISO1, SPI_SCLK, CS[1], transaction_length, CPOL, CPHA, display_high_bits, an, seg);
 endmodule//board

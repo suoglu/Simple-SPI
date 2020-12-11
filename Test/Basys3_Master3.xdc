@@ -151,8 +151,8 @@ set_property PACKAGE_PIN T18 [get_ports btnU]
 
 #Pmod Header JB
 #Sch name = JB1
-set_property PACKAGE_PIN A14 [get_ports {SPI_SCLK}]
-	set_property IOSTANDARD LVCMOS33 [get_ports {SPI_SCLK}]
+set_property PACKAGE_PIN A14 [get_ports {CS}]
+	set_property IOSTANDARD LVCMOS33 [get_ports {CS}]
 #Sch name = JB2
 set_property PACKAGE_PIN A16 [get_ports {MOSI}]
 	set_property IOSTANDARD LVCMOS33 [get_ports {MOSI}]
@@ -160,8 +160,8 @@ set_property PACKAGE_PIN A16 [get_ports {MOSI}]
 set_property PACKAGE_PIN B15 [get_ports {MISO}]
 	set_property IOSTANDARD LVCMOS33 [get_ports {MISO}]
 #Sch name = JB4
-set_property PACKAGE_PIN B16 [get_ports {CS}]
-	set_property IOSTANDARD LVCMOS33 [get_ports {CS}]
+set_property PACKAGE_PIN B16 [get_ports {SPI_SCLK}]
+	set_property IOSTANDARD LVCMOS33 [get_ports {SPI_SCLK}]
 #Sch name = JB7
 set_property PACKAGE_PIN A15 [get_ports {busy}]
 	set_property IOSTANDARD LVCMOS33 [get_ports {busy}]
