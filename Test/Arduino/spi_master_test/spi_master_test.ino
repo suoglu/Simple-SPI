@@ -1,51 +1,37 @@
 #include <SPI.h> 
 
-#define CS0 7  //Chip (Slave) select 
 int CPOL_MODE;
 int CPHA_MODE;
 int tlgth_MODE;
 int buffr;
 int slave_num;
-  
+bool newT;
+
 void setup() {
   Serial.begin(9600);
   Serial.print("\nSerial ready");
-  //chip selects
-  pinMode(CS, OUTPUT);
-  digitalWrite(CS, HIGH);
-  Serial.print("\nCS ready");
-  SPI.begin();
-  SPI.setClockDivider(SPI_CLOCK_DIV2);
-  SPI.setBitOrder(MSBFIRST);
-  SPI.setDataMode(SPI_MODE0);
-  Serial.print("\nSPI begin");
-  Serial.print("\nEnter 0 to transfer or 1 to config: ");
+  pinMode(SS, INPUT_PULLUP);
+  pinMode(MOSI, INPUT);
+  pinMode(SCK, INPUT);
+  pinMode(MISO, OUTPUT);
+  SPCR |= _BV(SPE);
+  SPI.attachInterrupt();
+  buffr = 0;
+  newT = false;
+  Serial.print("\nSPI ready");
+  Serial.print("\nEnter something for config: ");
 }
 
-void loop() 
-{
-  
-  if (Serial.available() > 0)
+void loop() {
+  if(newT)
   {
-    buffr = Serial.parseInt();
+    newT = false;
+    Serial.print("\nRecieved: ");
     Serial.print(buffr);
-    if(buffr == 0)
-    {
-      Serial.print("\nEnter data to send: ");
-      while (Serial.available() == 0);
-      buffr = Serial.parseInt();
-      Serial.print(buffr);
-      digitalWrite(CS, LOW);
-      Serial.print("\nResponse: ");
-      for(int i = 0; i < tlgth_MODE; i++)
-      {
-        Serial.print(SPI.transfer(buffr));
-      }
-      digitalWrite(CS, HIGH);  
-    }
-    else if(buffr == 1)
-    {
-      
+  }
+  if(Serial.available() > 0)
+  {
+      Serial.read(); //read inital data
       Serial.print("\nCPOL: ");
       while (Serial.available() == 0);
       CPOL_MODE = Serial.parseInt();
@@ -80,7 +66,13 @@ void loop()
           SPI.setDataMode(SPI_MODE0);
         }
       }
-    }
-    Serial.print("\nEnter 0 to transfer or 1 to config: ");
   }
 }
+
+ISR (SPI_STC_vect){
+  int hold = buffr;
+  //echo back
+  buffr = SPDR;
+  SPDR = hold;
+  newT = true;
+}  // end of interrupt service routine (ISR) SPI_STC_vect
