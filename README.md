@@ -30,7 +30,7 @@ Two SPI modules (a master and a slave) and a clock divider module are included i
 
 * SPI master module
 * Supports multiple slaves.
-* Supports all clock polarities (CPOL) and phases (CPHA).
+* Supports both clock polarities (CPOL) and phases (CPHA).
 * Supports 8, 16, 24 and 32 bit transactions.
 * Variable SPI clock frequecy generation
 
@@ -55,7 +55,7 @@ Two SPI modules (a master and a slave) and a clock divider module are included i
 
 Both modules use same naming.
 
-|   Port   | Module | Orientation | Width |  Description |
+|   Port   | Module | Type | Width |  Description |
 | :------: | :----: | :----: | :----: |  ------    |
 |  `clk`   |   M/S  |   I   | 1 | System Clock |
 |  `rst`   |   M/S  |   I   | 1 | System Reset |
@@ -144,8 +144,8 @@ System is tested using all available clock settings and transaction lengths with
 Modules are not tested with any other devices yet. Please let me know if you try it with a device.
 | Device Name | Tested Interface | CPOL/CPHA | Transaction Lenght | Status | Test Number | Notes |
 | :------: | :------: | :------: | :------: | :------: | :------: | ------ |
-| Digilent Digital Discovery | Master | All | 8, 16, 24, 32 bit | Ok | #2 | with Protocol Spying |
-| Arduino Uno | Slave | All | 8 bit | Planned | #? | Using native SPI library |
+| [Digilent Digital Discovery](https://reference.digilentinc.com/reference/instrumentation/digital-discovery/start) | Master | All | 8, 16, 24, 32 bit | Ok | #2 | with Protocol Spying |
+| [Arduino Uno](https://store.arduino.cc/arduino-uno-rev3) | Slave | All | 8 bit | Planned | #? | Using native SPI library |
 
 ## Known Issues
 
