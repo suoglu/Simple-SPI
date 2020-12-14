@@ -1,5 +1,5 @@
 /* ------------------------------------------------ *
- * Title       : Simple SPI interface v1.1          *
+ * Title       : Simple SPI interface v1.2          *
  * Project     : Simple SPI                         *
  * ------------------------------------------------ *
  * File        : spi.v                              *
@@ -12,6 +12,7 @@
  *     v1      : Inital version                     *
  *     v1.1    : SLAVE_ADDRS_LEN calculated automa- *
  *               tically from SLAVE_COUNT.          *
+ *     v1.2    : Daisy chain mode for slave module  *
  * ------------------------------------------------ */
 
 module spi_master#(parameter SLAVE_COUNT = 8)(
@@ -239,6 +240,7 @@ module spi_slave(
   input [1:0] transaction_length, //0x00 8bit, 0x01 16bit, 0x10 24bit, 0x11 32bit
   input CPOL, //Clock polarity
   input CPHA, //Clock phase
+  input daisy_chain, //Enable for daisy chain mode
   input default_val);
   parameter SPI_READY   = 2'b00, //Ready for new process
             SPI_PRE_Tx  = 2'b01, //Pre transfer process
@@ -255,7 +257,7 @@ module spi_slave(
   wire [15:0] clk_array;
   wire spi_clk_sys; //SPI clock to be used in the module
 
-  assign MISO = (CS) ? 1'dZ : MISO_s;
+  assign MISO = (CS) ? ((daisy_chain) ? MOSI : 1'dZ)  : MISO_s;
 
   //Decode states
   assign SPI_ready = (SPI_state == SPI_READY);

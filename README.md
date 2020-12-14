@@ -39,6 +39,7 @@ Two SPI modules (a master and a slave) and a clock divider module are included i
 * SPI slave module
 * Supports both clock polarities (CPOL) and phases (CPHA).
 * Supports 8, 16, 24 and 32 bit transactions.
+* Daisy chain mode
 
 **`MISO_switch`**
 
@@ -49,7 +50,7 @@ Two SPI modules (a master and a slave) and a clock divider module are included i
 * Used to generate SPI clock from system clock.
 * Outputs a clock array with 16 diffrent frequencies.
 
-**Important:** CPOL, CPHA and transaction width values should be decided before the transaction begins.
+**Important:** CPOL, CPHA and transaction width values should be decided before the transaction begins and should be kept constant during transaction.
 
 ## IOs of Modules
 
@@ -72,6 +73,7 @@ Both modules use same naming.
 | `division_ratio` | M | I | 4 | Choose SPI clock frequency |
 | `CPOL` | M/S | I | 1 | SPI Clock polarity |
 | `CPHA` | M/S | I | 1 | SPI Clock phase |
+| `daisy_chain` | S | I | 1 | Daisy chain mode, when not selected propagate MOSI to MISO |
 | `default_val` | M/S | I | 1 | MISO/MOSI value when not in transfer |
 
 M: Master  S: Slave  I: Input  O: Output
