@@ -69,7 +69,8 @@ void loop() {
   }
 }
 
-ISR (SPI_STC_vect){
+ISR (SPI_STC_vect)
+{
   int hold = buffr;
   //echo back
   buffr = SPDR;

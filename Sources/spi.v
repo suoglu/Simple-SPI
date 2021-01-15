@@ -8,7 +8,7 @@
  * ------------------------------------------------ *
  * Description : SPI slave and master modules       *
  * ------------------------------------------------ *
- * Revisions   :                                    *
+ * Revisions                                        *
  *     v1      : Inital version                     *
  *     v1.1    : SLAVE_ADDRS_LEN calculated automa- *
  *               tically from SLAVE_COUNT.          *

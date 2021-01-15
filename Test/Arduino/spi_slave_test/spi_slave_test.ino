@@ -1,6 +1,5 @@
 #include <SPI.h> 
 
-#define CS0 7  //Chip (Slave) select 
 int CPOL_MODE;
 int CPHA_MODE;
 int tlgth_MODE;
@@ -8,14 +7,18 @@ int buffr;
 int slave_num;
   
 void setup() {
+  delay(0);
   Serial.begin(9600);
   Serial.print("\nSerial ready");
   //chip selects
-  pinMode(CS, OUTPUT);
-  digitalWrite(CS, HIGH);
-  Serial.print("\nCS ready");
+  pinMode(SS, OUTPUT);
+  digitalWrite(SS, HIGH);
+  pinMode(MOSI, OUTPUT);
+  pinMode(SCK, OUTPUT);
+  pinMode(MISO, INPUT);
+  Serial.print("\nSS ready");
   SPI.begin();
-  SPI.setClockDivider(SPI_CLOCK_DIV2);
+  //SPI.setClockDivider(SPI_CLOCK_DIV2);
   SPI.setBitOrder(MSBFIRST);
   SPI.setDataMode(SPI_MODE0);
   Serial.print("\nSPI begin");
@@ -35,13 +38,13 @@ void loop()
       while (Serial.available() == 0);
       buffr = Serial.parseInt();
       Serial.print(buffr);
-      digitalWrite(CS, LOW);
+      digitalWrite(SS, LOW);
       Serial.print("\nResponse: ");
       for(int i = 0; i < tlgth_MODE; i++)
       {
         Serial.print(SPI.transfer(buffr));
       }
-      digitalWrite(CS, HIGH);  
+      digitalWrite(SS, HIGH);  
     }
     else if(buffr == 1)
     {

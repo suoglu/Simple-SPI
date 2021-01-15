@@ -146,9 +146,9 @@ System is tested using all available clock settings and transaction lengths with
 Modules are not tested with any other devices yet. Please let me know if you try it with a device.
 | Device Name | Tested Interface | CPOL/CPHA | Transaction Lenght | Status | Test Number | Notes |
 | :------: | :------: | :------: | :------: | :------: | :------: | ------ |
-| [Digilent Digital Discovery](https://reference.digilentinc.com/reference/instrumentation/digital-discovery/start) | Master | All | 8, 16, 24, 32 bit | Ok | #2 | with Protocol Spying |
-| [Pmod MIC3](https://reference.digilentinc.com/reference/pmod/pmodmic3/start) | Master | 1/1 | 16 bit | Ok | [link](https://gitlab.com/suoglu/pmod/-/tree/master/Pmods/MIC3) | Modified version of the master module is used |
-| [Arduino Uno](https://store.arduino.cc/arduino-uno-rev3) | Slave | All | 8 bit | Planned | #? | Using native SPI library |
+| [Digilent Digital Discovery](https://reference.digilentinc.com/reference/instrumentation/digital-discovery/start) | Master | All | 8, 16, 24, 32 bit | Working | #2 | with Protocol Spying |
+| [Pmod MIC3](https://reference.digilentinc.com/reference/pmod/pmodmic3/start) | Master | 1/1 | 16 bit | Working | [link](https://gitlab.com/suoglu/pmod/-/tree/master/Pmods/MIC3) | Modified version of the master module is used |
+| [Arduino Uno](https://store.arduino.cc/arduino-uno-rev3)/ | Slave/Master | All | 8 bit | Not Tested Yet| #? | Using native SPI library |
 
 ## Known Issues
 
