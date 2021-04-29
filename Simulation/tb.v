@@ -4,7 +4,7 @@
  * ------------------------------------------------- *
  * File        : tb.v                                *
  * Author      : Yigit Suoglu                        *
- * Last Edit   : 04/12/2020                          *
+ * Last Edit   : 29/04/2021                          *
  * ------------------------------------------------- *
  * Description : Simulation for SPI modules in spi.v *
  * ------------------------------------------------- */
@@ -13,19 +13,22 @@
 //`include "Sources/spi.v"
 
 module testbench();
-    reg clk, rst, start_trans, default_val, CPOL, CPHA, clkDiv_en;
+    reg clk, rst, start_trans, CPOL, CPHA;
     wire busy_m, busy_s, MOSI, SPI_SCLK, MISO;
     wire [31:0] rx_data_m, rx_data_s;
     wire [7:0] CS;
     reg [31:0] tx_data_m, tx_data_s;
     reg [1:0] transaction_length;
+    wire spi_clk_ext;
 
     always #5 clk <= ~clk;
 
-    //assign MISO = MOSI;
+    pullup(MISO);
 
-    spi_master master_uut(clk, rst, start_trans, busy_m, MOSI, MISO, SPI_SCLK, CS, tx_data_m, rx_data_m, 3'd0, transaction_length, 4'd1, CPOL, CPHA, 1'b0);
-    spi_slave slave_uut(clk, rst, busy_s, MOSI, MISO, SPI_SCLK, CS[0], tx_data_s, rx_data_s, transaction_length, CPOL, CPHA, 1'b0);
+    //assign MISO = MOSI;
+    spi_clk_gen spiClk(clk, rst, 4'd1, spi_clk_ext);
+    spi_master master_uut(clk, rst, spi_clk_ext, start_trans, busy_m, MOSI, MISO, SPI_SCLK, CS, tx_data_m, rx_data_m, 3'd0, transaction_length, CPOL, CPHA, 1'b0);
+    spi_slave slave_uut(clk, rst, busy_s, MOSI, MISO, SPI_SCLK, CS[0], tx_data_s, rx_data_s, transaction_length, CPOL, CPHA, 1'b0,1'b0);
 
 //    initial //Tracked signals & Total sim time
 //        begin

@@ -1,10 +1,10 @@
 /* ------------------------------------------------ *
- * Title       : Simple SPI interface v1.2          *
+ * Title       : Simple SPI interface v1.3          *
  * Project     : Simple SPI                         *
  * ------------------------------------------------ *
  * File        : spi.v                              *
  * Author      : Yigit Suoglu                       *
- * Last Edit   : 04/12/2020                         *
+ * Last Edit   : 29/04/2021                         *
  * ------------------------------------------------ *
  * Description : SPI slave and master modules       *
  * ------------------------------------------------ *
@@ -13,11 +13,14 @@
  *     v1.1    : SLAVE_ADDRS_LEN calculated automa- *
  *               tically from SLAVE_COUNT.          *
  *     v1.2    : Daisy chain mode for slave module  *
+ *     v1.3    : Clock generation moved outside of  *
+ *               master module.                     *
  * ------------------------------------------------ */
 
 module spi_master#(parameter SLAVE_COUNT = 8)(
   input clk,
-  input rst, 
+  input rst,
+  input ext_spi_clkx2, //Double the spi freq.
   input start_trans, //Start transaction
   output busy, 
   output reg MOSI, 
@@ -28,7 +31,6 @@ module spi_master#(parameter SLAVE_COUNT = 8)(
   output reg [31:0] rx_data, 
   input [($clog2(SLAVE_COUNT)-1):0] chipADDRS, 
   input [1:0] transaction_length, //0b00 8bit, 0b01 16bit, 0b10 24bit, 0b11 32bit
-  input [3:0] division_ratio,
   input CPOL, //Clock polarity
   input CPHA, //Clock phase
   input default_val);
@@ -46,12 +48,9 @@ module spi_master#(parameter SLAVE_COUNT = 8)(
   reg [31:0] rx_buff;
   reg [32:0] tx_buff;
   //Counters and clocking
-  wire [15:0] clk_array;
   wire spi_clk_main; //Main SPI clock 
   wire spi_clk_sys; //SPI clock to be used in the module
   reg stopper;
-  
-  cclockDiv16_a clock_div(clk, rst, clk_array);
 
   //Decode states
   assign SPI_ready = (SPI_state == SPI_READY);
@@ -61,7 +60,7 @@ module spi_master#(parameter SLAVE_COUNT = 8)(
   assign busy = ~SPI_ready;
 
   //Generated clock
-  assign spi_clk_main = clk_array[division_ratio];
+  assign spi_clk_main = ext_spi_clkx2;
   //SPI clock should not work when not in use
   assign SPI_SCLK = (SPI_working) ? (CPOL ^ spi_clk_main) : CPOL;
   //Clock polarisation and phase adjustment for inner logic
@@ -379,12 +378,13 @@ endmodule//spi_slave
   + 1111:     1.526   kHz
   */
 //Clock divider module
-module cclockDiv16_a(clk_i, rst, clk_o);
+module spi_clk_gen(clk_i, rst, division_ratio, clk_o);
   input clk_i, rst;
-  output [15:0] clk_o;  
+  input [3:0] division_ratio;
+  output clk_o;  
   reg [15:0] clk_array; //Clock generation array, asynchronous reset
 
-  assign clk_o = clk_array;
+  assign clk_o = clk_array[division_ratio];
 
   //Clock dividers
   always@(posedge clk_i or posedge rst)
