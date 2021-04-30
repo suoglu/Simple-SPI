@@ -1,5 +1,5 @@
 /* ------------------------------------------------ *
- * Title       : Simple SPI interface v1.3          *
+ * Title       : Simple SPI interface v2            *
  * Project     : Simple SPI                         *
  * ------------------------------------------------ *
  * File        : spi.v                              *
@@ -15,6 +15,8 @@
  *     v1.2    : Daisy chain mode for slave module  *
  *     v1.3    : Clock generation moved outside of  *
  *               master module.                     *
+ *     v2      : Change bit counting and clocking   *
+ *               algorithm                          *
  * ------------------------------------------------ */
 
 module spi_master#(parameter SLAVE_COUNT = 8)(
@@ -25,7 +27,7 @@ module spi_master#(parameter SLAVE_COUNT = 8)(
   output busy, 
   output reg MOSI, 
   input MISO, 
-  output SPI_SCLK, 
+  output SCLK, 
   output reg [(SLAVE_COUNT-1):0] CS, 
   input [31:0] tx_data, 
   output reg [31:0] rx_data, 
@@ -48,9 +50,8 @@ module spi_master#(parameter SLAVE_COUNT = 8)(
   reg [31:0] rx_buff;
   reg [32:0] tx_buff;
   //Counters and clocking
-  wire spi_clk_main; //Main SPI clock 
+  reg spi_clk_main; //Main SPI clock 
   wire spi_clk_sys; //SPI clock to be used in the module
-  reg stopper;
 
   //Decode states
   assign SPI_ready = (SPI_state == SPI_READY);
@@ -60,11 +61,18 @@ module spi_master#(parameter SLAVE_COUNT = 8)(
   assign busy = ~SPI_ready;
 
   //Generated clock
-  assign spi_clk_main = ext_spi_clkx2;
+  always@(posedge ext_spi_clkx2 or posedge rst)
+    begin
+      if(rst) begin
+        spi_clk_main <= 1'b0;
+      end else begin
+        spi_clk_main <= ~spi_clk_main;
+      end
+    end
   //SPI clock should not work when not in use
-  assign SPI_SCLK = (SPI_working) ? (CPOL ^ spi_clk_main) : CPOL;
+  assign SCLK = (SPI_working) ? (CPOL ^ spi_clk_main) : CPOL;
   //Clock polarisation and phase adjustment for inner logic
-  assign spi_clk_sys = (SPI_SCLK ^ CPOL) ^ CPHA;
+  assign spi_clk_sys = (SCLK ^ CPOL) ^ CPHA;
 
   //SPI states
   always@(posedge clk)
@@ -86,7 +94,7 @@ module spi_master#(parameter SLAVE_COUNT = 8)(
               end
             SPI_Tx:
               begin
-                SPI_state <= (((~|SPI_transaction_counter) & (CPOL == SPI_SCLK)) & (~stopper)) ? SPI_POST_Tx : SPI_Tx;
+                SPI_state <= (((~|SPI_transaction_counter & ext_spi_clkx2) & (CPOL == SCLK))) ? SPI_POST_Tx : SPI_Tx;
               end
             SPI_POST_Tx:
               begin
@@ -97,7 +105,7 @@ module spi_master#(parameter SLAVE_COUNT = 8)(
     end
 
   //SPI transaction counter
-  always@(posedge spi_clk_sys or posedge SPI_pre_t)
+  always@(negedge ext_spi_clkx2 or posedge SPI_pre_t)
     begin
       if(SPI_pre_t)
         begin
@@ -122,27 +130,8 @@ module spi_master#(parameter SLAVE_COUNT = 8)(
         end
       else
         begin
-          SPI_transaction_counter <= SPI_transaction_counter + 5'd1;
+          SPI_transaction_counter <= SPI_transaction_counter + {4'h0,(spi_clk_main & SPI_working)};
         end
-    end
-  
-  //Stopper for early termination
-  always@(posedge clk)
-    begin
-      case(SPI_state)
-        SPI_READY:
-          begin
-            stopper <= 1;
-          end
-        SPI_Tx:
-          begin
-            stopper <= (SPI_transaction_counter == 5'd27) ? 0 : stopper;
-          end
-        default:
-          begin
-            stopper <= stopper;
-          end
-      endcase
     end
 
   //MOSI handle according to Tx leght
@@ -232,7 +221,7 @@ module spi_slave(
   output busy, 
   input MOSI, 
   output MISO, 
-  input SPI_SCLK, 
+  input SCLK, 
   input CS, 
   input [31:0] tx_data, 
   output reg [31:0] rx_data,
@@ -266,7 +255,7 @@ module spi_slave(
   assign busy = ~SPI_ready;
 
   //Clock polarisation and phase adjustment for inner logic
-  assign spi_clk_sys = (SPI_SCLK ^ CPOL) ^ CPHA;
+  assign spi_clk_sys = (SCLK ^ CPOL) ^ CPHA;
 
   //SPI states
   always@(posedge clk)

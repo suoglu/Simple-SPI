@@ -26,7 +26,7 @@ module testbench();
     pullup(MISO);
 
     //assign MISO = MOSI;
-    spi_clk_gen spiClk(clk, rst, 4'd1, spi_clk_ext);
+    spi_clk_gen spiClk(clk, rst, 4'd0, spi_clk_ext);
     spi_master master_uut(clk, rst, spi_clk_ext, start_trans, busy_m, MOSI, MISO, SPI_SCLK, CS, tx_data_m, rx_data_m, 3'd0, transaction_length, CPOL, CPHA, 1'b0);
     spi_slave slave_uut(clk, rst, busy_s, MOSI, MISO, SPI_SCLK, CS[0], tx_data_s, rx_data_s, transaction_length, CPOL, CPHA, 1'b0,1'b0);
 
@@ -59,7 +59,7 @@ module testbench();
             clk <= 0;
             rst <= 0;
             start_trans <= 0;
-            CPHA <= 1;
+            CPHA <= 0;
             CPOL <= 0;
             transaction_length <= 2'd0;
             #3

@@ -18,7 +18,7 @@
  +    e   c                                            +
  +      d                                              +
  * --------------------------------------------------- */
-
+ 
 //Converts 4 bit input to hex abcdefg
 module ssd_encode(in, abcdefg);
   parameter zero = 7'b0000001, one = 7'b1001111, two = 7'b0010010;
@@ -54,13 +54,12 @@ module ssd_encode(in, abcdefg);
 endmodule // ssdDecode
 
 //Seven Segment Display controller: takes 4 4-bit digits and generates ssd control signals to displays them
-module ssdController4(clk, rst, mode, digit3, digit2, digit1, digit0, seg, an);
+module ssdController4(clk, rst, mode, digit0, digit1, digit2, digit3, a, b, c, d, e, f, g, an);
   input clk, rst;
   input [3:0] mode; //each bit represents enableing correspond ssd
   //e.g. mode=0001 means only least significant digit (rightmost, digit0) is going to be enabled
   input [3:0] digit0, digit1, digit2, digit3;
-  output [6:0] seg;
-  wire a, b, c, d, e, f, g;
+  output a, b, c, d, e, f, g;
   output reg [3:0] an;
 
   reg [1:0] state; //shows a diffrent digit every state
@@ -72,7 +71,6 @@ module ssdController4(clk, rst, mode, digit3, digit2, digit1, digit0, seg, an);
   wire [6:0] abcdefg;
   reg [3:0] digit[3:0];
 
-  assign seg = {g, f, e, d, c, b, a};
   assign stateClk = counter[15]; //state clock determined by MSB of counter
 
   //both state and counter will warp 11.. to 00.. at max
@@ -120,14 +118,13 @@ module ssdController4(clk, rst, mode, digit3, digit2, digit1, digit0, seg, an);
 endmodule //Master seven segment display (SSD) control 4 SSDs
 
 //Seven Segment Display controller: takes 2 4-bit digits and generates ssd control signals to displays them
-module ssdController2(clk, rst, mode, digit1, digit0, seg, an);
+module ssdController2(clk, rst, mode, digit0, digit1, a, b, c, d, e, f, g, an);
   input clk, rst;
   input [1:0] mode; //each bit represents enableing correspond ssd
   //e.g. mode=01 means only least significant digit (rightmost, digit0) is going to be enabled
   input [3:0] digit0, digit1;
-  wire a, b, c, d, e, f, g;
+  output a, b, c, d, e, f, g;
   output reg [1:0] an;
-  output [6:0] seg;
 
   reg state; //shows a diffrent digit every state
   wire stateClk; //state changes every edge of stateClk
@@ -138,7 +135,6 @@ module ssdController2(clk, rst, mode, digit1, digit0, seg, an);
   wire [6:0] abcdefg;
   reg [3:0] digit[1:0];
 
-  assign seg = {g, f, e, d, c, b, a};
   assign stateClk = counter[15]; //state clock determined by MSB of counter
 
   always@(posedge stateClk or posedge rst) //state transactions
