@@ -5,6 +5,7 @@
  * File        : miso_switch.v                      *
  * Author      : Yigit Suoglu                       *
  * Last Edit   : 08/12/2020                         *
+ * Licence     : CERN-OHL-W                         *
  * ------------------------------------------------ *
  * Description : Route MISO signals, usefull when   *
  *               tri-state is not available         *

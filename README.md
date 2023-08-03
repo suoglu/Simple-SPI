@@ -12,6 +12,7 @@
 8. Status Information
 9. List of Tested Devices
 10. Knows Issues
+11. License
 
 [![Repo on GitLab](https://img.shields.io/badge/repo-GitLab-6C488A.svg)](https://gitlab.com/suoglu/spi)
 [![Repo on GitHub](https://img.shields.io/badge/repo-GitHub-3D76C2.svg)](https://github.com/suoglu/Simple-SPI)
@@ -177,3 +178,7 @@ Modules are not tested with any other devices yet. Please let me know if you try
 ## Known Issues
 
 * In simulation, MISO signal might come late when `CPHA` is high during 8 bit transaction. However it is working properly on device.
+
+## License
+
+CERN Open Hardware Licence Version 2 - Weakly Reciprocal

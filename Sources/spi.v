@@ -5,6 +5,7 @@
  * File        : spi.v                              *
  * Author      : Yigit Suoglu                       *
  * Last Edit   : 29/04/2021                         *
+ * Licence     : CERN-OHL-W                         *
  * ------------------------------------------------ *
  * Description : SPI slave and master modules       *
  * ------------------------------------------------ *
