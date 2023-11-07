@@ -3,16 +3,18 @@
 ## Contents of Readme
 
 1. About
-2. Modules
-3. IOs of Modules
-4. SPI Synchronous Clock
-5. Serial Peripheral Interface (Brief information)
-6. Simulation
-7. Test
-8. Status Information
-9. List of Tested Devices
-10. Knows Issues
-11. License
+2. Native Interface
+   1. Modules
+   2. IOs of Modules
+   3. SPI Synchronous Clock
+   4. Serial Peripheral Interface (Brief information)
+   5. Simulation
+   6. Test
+   7. Status Information
+   8. List of Tested Devices
+   9. Knows Issues
+3. AXI Interface
+4. License
 
 [![Repo on GitLab](https://img.shields.io/badge/repo-GitLab-6C488A.svg)](https://gitlab.com/suoglu/spi)
 [![Repo on GitHub](https://img.shields.io/badge/repo-GitHub-3D76C2.svg)](https://github.com/suoglu/Simple-SPI)
@@ -23,11 +25,13 @@
 
 Set of simple modules to communicate using SPI protocol.
 
-## Modules
+## Native Interface
+
+### Modules
 
 Two SPI modules (a master and a slave) and a clock divider module are included in [spi.v](Sources/spi.v). A MISO signal router included in [miso_switch.v](Sources/miso_switch.v).
 
-### `spi_master`
+#### `spi_master`
 
 * SPI master module
 * Supports multiple slaves.
@@ -42,18 +46,18 @@ Two SPI modules (a master and a slave) and a clock divider module are included i
 
     **Note:** `SLAVE_COUNT` set to 1.
 
-### `spi_slave`
+#### `spi_slave`
 
 * SPI slave module
 * Supports both clock polarities (CPOL) and phases (CPHA).
 * Supports 8, 16, 24 and 32 bit transactions.
 * Daisy chain mode
 
-### `MISO_switch`
+#### `MISO_switch`
 
 * Can be used to route correct MISO signal coming from slaves to MISO input of master when three-state logic is not available.
 
-### `spi_clk_gen`
+#### `spi_clk_gen`
 
 * Used to generate SPI clock from system clock.
 * Output clock frequency can be controlled.
@@ -67,7 +71,7 @@ Two SPI modules (a master and a slave) and a clock divider module are included i
 
 **Important:** CPOL, CPHA and transaction width values should be decided before the transaction begins and should be kept constant during transaction.
 
-## IOs of Modules
+### IOs of Modules
 
 Both modules use same naming.
 
@@ -99,7 +103,7 @@ M: Master  S: Slave  I: Input  O: Output
 | `SLAVE_COUNT` |   8  |   Number of maximum addressable slaves |
 | `SLAVE_ADDRS_LEN` |   3  | Width of the slave address (Calculated automatically) |
 
-## SPI Synchronous Clock
+### SPI Synchronous Clock
 
 SPI clock can be generated from system clock using `spi_clk_gen` module. `spi_clk_gen` generates following frequencies for 100 MHz system clock.
 
@@ -122,7 +126,7 @@ SPI clock can be generated from system clock using `spi_clk_gen` module. `spi_cl
 |  1110 |    3.052  | kHz |
 |  1111 |    1.526  | kHz |
 
-## Serial Peripheral Interface
+### Serial Peripheral Interface
 
 Information about Serial Peripheral Interface (SPI) can be found on [Wikipedia](https://en.wikipedia.org/wiki/Serial_Peripheral_Interface). A really good introduction can be found on [Analog.com](https://www.analog.com/en/analog-dialogue/articles/introduction-to-spi-interface.html).
 
@@ -130,13 +134,13 @@ SPI can be used to communicate a single master with multiple slaves. SPI protoco
 
 SPI transaction can happen in four different modes, defined by clock polarity (`CPOL`) and clock phase (`CPHA`). Clock polarity defines value of clock when not in transaction. When `CPOL` is high, SPI clock value is also high when not in transaction. When `CPOL` is low, SPI clock value is also low when not in transaction. Clock phase determines which edge is to store data. When `CPHA` is low, at the odd numbered edges (first, third...) data is stored and at the even numbered edges (second, fourth...) data is shifted. When `CPHA` is high, at the odd numbered edges (first, third...) data is shifted and at the even numbered edges (second, fourth...) data is stored.
 
-## Simulation
+### Simulation
 
 Modules simulated in [tb.v](Simulation/tb.v). Slave and master module simulated togeter. During simulation both received data and MOSI/MISO signals are verified. Modules simulated for all `CPOL`, `CPHA` and `transaction_length` values. ([tb.v](Simulation/tb.v) does not contain all simulation cases, just the last simulation.) Multiple clock frequencies (including highest possible), but not all, are simulated.
 
-## Test
+### Test
 
-### Test with Master v2
+#### Test with Master v2
 
 **Test 3:**
 
@@ -144,7 +148,7 @@ Master module v2 tested with [master_tester_v2.v](Test/master_tester_v2.v) and [
 
 All SPI modes with 8, 16, 24 and 32 bit data transfer in various frequencies are tested. Highest tested SPI clock frequency is 25 MHz.
 
-### Test with Master v1
+#### Test with Master v1
 
 Modules are tested using *board**N**.v* and constrain file *Basys3_master**N**.xdc*, where ***N*** denotes the test board version.
 
@@ -160,13 +164,13 @@ Master module is tested on [Digilent Basys 3](https://reference.digilentinc.com/
 
 System is tested using all available clock settings and transaction lengths with multiple SPI clock frequencies. System sometimes behaves unstable when used in two highest available clock frequency (25 & 50 MHz). System behaves as expected for other tested frequencies, similar to Test 1.
 
-## Status Information
+### Status Information
 
 **Last simulation:** 29 April 2021, with [Vivado Simulator](https://www.xilinx.com/products/design-tools/vivado/simulator.html).
 
 **Last test:** 30 April 2021, on [Digilent Basys 3](https://reference.digilentinc.com/reference/programmable-logic/basys-3/reference-manual).
 
-## List of Tested Devices
+### List of Tested Devices
 
 Modules are not tested with any other devices yet. Please let me know if you try it with a device.
 | Device Name | Tested Interface | CPOL/CPHA | Transaction Lenght | Status | Test  | Notes |
@@ -175,7 +179,7 @@ Modules are not tested with any other devices yet. Please let me know if you try
 | [Pmod MIC3](https://reference.digilentinc.com/reference/pmod/pmodmic3/start) | Master | 1/1 | 16 bit | Working | [link](https://gitlab.com/suoglu/pmod/-/tree/master/Pmods/MIC3) | Modified version of the master module is used |
 | [Pmod AD1](https://reference.digilentinc.com/reference/pmod/pmodad1/start) | Master | 1/1 | 16 bit | Working | [link](https://gitlab.com/suoglu/pmod/-/tree/master/Pmods/AD1) | Modified version of the master module is used |
 
-## Known Issues
+### Known Issues
 
 * In simulation, MISO signal might come late when `CPHA` is high during 8 bit transaction. However it is working properly on device.
 
